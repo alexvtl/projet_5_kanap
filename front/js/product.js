@@ -51,8 +51,10 @@ const boutonpanier = document.querySelector('#addToCart');
 
 boutonpanier.addEventListener('click', function(x){
 
+
     let chooseColor = balisecolors.value
     let chooseQuantity = balisequantity.value
+    console.log(chooseColor)
 
     class kanappanier {
         constructor(id,color,quantity){
@@ -65,32 +67,29 @@ boutonpanier.addEventListener('click', function(x){
     let mykanap = new kanappanier(`${id}`,`${chooseColor}`,`${chooseQuantity}`);
     
     let panierEnr = JSON.parse(localStorage.getItem('panier'));
+    if(chooseColor != "" && chooseQuantity > 0 && chooseQuantity <= 100){
+        if(panierEnr){
+            const idcolorenregistrés = panierEnr.map((article) => article.id + article.color)
+                
+                let foundProductIndex = idcolorenregistrés.findIndex(element => element == id + mykanap.color)
+                console.log(foundProductIndex)
 
-   if(panierEnr){
-    const idcolorenregistrés = panierEnr.map((article) => article.id + article.color)
+                if(foundProductIndex >= 0){
+                    let addquantity = parseInt(panierEnr[foundProductIndex].quantity)+ parseInt(mykanap.quantity)
+                    panierEnr[foundProductIndex].quantity = JSON.stringify(addquantity)
+                    localStorage.setItem('panier', JSON.stringify(panierEnr))
+                }else{
+                    panierEnr.push(mykanap)
+                    localStorage.setItem('panier', JSON.stringify(panierEnr))
+                }
 
-    for( let i of idcolorenregistrés){
-        
-        let foundProductIndex = idcolorenregistrés.findIndex(element => element == id + mykanap.color)
-        console.log(foundProductIndex)
-
-        if(foundProductIndex >= 0){
-            let addquantity = parseInt(panierEnr[foundProductIndex].quantity)+ parseInt(mykanap.quantity)
-            panierEnr[foundProductIndex].quantity = JSON.stringify(addquantity)
-            localStorage.setItem('panier', JSON.stringify(panierEnr))
-            return
         }else{
+            panierEnr = [];
             panierEnr.push(mykanap)
-            localStorage.setItem('panier', JSON.stringify(panierEnr))
-            return
+            localStorage.setItem('panier',JSON.stringify(panierEnr))
         }
+    }else{
+        alert('Veuillez choisir une couleur et une quantité entre 0 et 100')
     }
-
-   }else{
-    panierEnr = [];
-    panierEnr.push(mykanap)
-    localStorage.setItem('panier',JSON.stringify(panierEnr))
-   }
-
 
 })
