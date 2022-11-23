@@ -1,15 +1,15 @@
 let items = document.getElementById('items')
 
 function createkanap(kanap){
-let newA = document.createElement('a');
-newA.setAttribute('href',`./product.html?id=${kanap._id}`)
-newA.innerHTML = `
-<article>
-<img src=${kanap.imageUrl} alt=${kanap.altTxt}>
-<h3 class="productName">${kanap.name}</h3>
-<p class="productDescription">${kanap.description}</p>
-</article>`
-return newA
+  let newA = document.createElement('a');
+  newA.setAttribute('href',`./product.html?id=${kanap._id}`)
+  newA.innerHTML = `
+  <article>
+  <img src=${kanap.imageUrl} alt=${kanap.altTxt}>
+  <h3 class="productName">${kanap.name}</h3>
+  <p class="productDescription">${kanap.description}</p>
+  </article>`
+  return newA
 }
 
 
