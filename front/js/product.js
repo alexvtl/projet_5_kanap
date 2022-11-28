@@ -1,10 +1,6 @@
 const str = window.location.href;
-
-
 let url = new URL(str);
-
 let id = url.searchParams.get('id');
-
 
 const baliseimg = document.querySelector('.item__img');
 const balisetitle = document.querySelector('#title');
@@ -21,10 +17,8 @@ fetch('http://localhost:3000/api/products')
 .then( function(value){
     for (kanap of value){
     
-
         if(id===kanap._id){
     
-        
         baliseimg.innerHTML = `<img src=${kanap.imageUrl} alt=${kanap.altTxt}>`
         balisetitle.innerHTML=`${kanap.name}`
         baliseprice.innerHTML=`${kanap.price}`
@@ -46,11 +40,9 @@ fetch('http://localhost:3000/api/products')
 .catch(function(err) {
    })
 
-
 const boutonpanier = document.querySelector('#addToCart');
 
 boutonpanier.addEventListener('click', function(x){
-
 
     let chooseColor = balisecolors.value
     let chooseQuantity = balisequantity.value
@@ -82,7 +74,6 @@ boutonpanier.addEventListener('click', function(x){
                     panierEnr.push(mykanap)
                     localStorage.setItem('panier', JSON.stringify(panierEnr))
                 }
-
         }else{
             panierEnr = [];
             panierEnr.push(mykanap)
@@ -91,5 +82,4 @@ boutonpanier.addEventListener('click', function(x){
     }else{
         alert('Veuillez choisir une couleur et une quantité entre 0 et 100')
     }
-
 })
