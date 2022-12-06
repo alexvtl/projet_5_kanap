@@ -1,26 +1,27 @@
-console.log(localStorage.getItem('panier'))
+// on récupere la tableau 'panier du local strorage'
 let cart = JSON.parse(localStorage.getItem('panier'))
-console.log(cart)
 
 let baliseItems = document.getElementById('cart__items')
 let totalCart = 0;
 let totalQuantity = 0;
-
-if(cart == null){
-  baliseItems.innerHTML = 'Votre panier est vide'
+//Si le localstorage('panier) n'existe pas, un message que le panier est vide est affiché
+if(!cart){
+  baliseItems.innerHTML = 'Votre panier est vide, Veuillez sélectionner des articles'
   baliseItems.style.backgroundColor = "red"
   baliseItems.style.textAlign="center"
+// si le localstorage existe, pour chaque article du panier dans le localstorage 
+//on récupère les caractéristiques de l'article avec une requête fetch en utlisant l'url de l'api +l'id du produit
 }else if(cart.length>0){
 for(let product of cart){
 
  let URL = 'http://localhost:3000/api/products/'
- console.log(product)
 
 fetch( URL + product.id)
 .then( function(res){
     if(res.ok){
         return res.json()}
 })
+// si la requête s'est bien passée on ajoute notre balise article avec les caractéristique de l'article à la balise parent 'cart__items'
 .then( function(value){
     let affichage = ''
      affichage += `
@@ -58,34 +59,32 @@ fetch( URL + product.id)
     let totalPrice = document.getElementById('totalPrice')
     totalPrice.innerHTML = totalCart;
 
-//actualisation du changement de la quantité(prise en cpte de l'id et couleur sur le pdt)
-
+//actualisation de la quantité (prise en compte de l'id et couleur sur le produit)
   function modifQuantity() {
     const itemsQuantity = document.querySelectorAll(".itemQuantity");
   
     itemsQuantity.forEach((itemQuantity) => {
-
+//lorsque la quantité est changé sur la page panier on récupere l'id et la couleur de larticle le plus proche avec .closest et 
+// on modifie la quantité dans le localstorage par la nouvelle quantitée.
       itemQuantity.addEventListener("change", () => {
 
         const newQuantity = Number(itemQuantity.value);
         itemQuantity.textContent = newQuantity;
         let kanap = itemQuantity.closest("article");
-        console.log(kanap)
         let cart = JSON.parse(localStorage.getItem("panier"));
         let getId = kanap.getAttribute("data-id"); 
-        console.log(getId);
         let getColor = kanap.getAttribute("data-color"); 
-        console.log(getColor)
+
         for (let index = 0; index < cart.length; index++) {
 
-          const productLocalS = cart[index];
+          let productLocalS = cart[index];
           if (getId === productLocalS.id && getColor === productLocalS.color) {
 
             if(newQuantity <= 100 && newQuantity > 0){ 
             productLocalS.quantity = newQuantity;
             localStorage.setItem("panier", JSON.stringify(cart))
             window.location.reload();
-            
+//si la nouvelle quantité est de 0 alors l'article en question est supprimé avec la fonction removeItem()
             }else if(newQuantity==0){
               removeItem(getId,getColor)
             }else{
@@ -97,10 +96,9 @@ fetch( URL + product.id)
       });
     });
   }
-
   modifQuantity();
 
-// click bouton supprimer prend l'id et la color de la balise article le plus proche
+// cliquer sur le bouton supprimer prend l'id et la color de la balise de l'article le plus proche et le supprime du panier
     let balisesDelete = document.querySelectorAll('.deleteItem');
     balisesDelete.forEach((baliseDelete) => {
       baliseDelete.addEventListener('click', () => {
@@ -113,7 +111,7 @@ fetch( URL + product.id)
         removeItem(getId,getColor)
         })
       })
-// et réactualise le localstorage avec les produits restants avec la fonction removeItem
+// fonction removeItem réactualise le localstorage avec les produits restants
     function removeItem(getId,getColor){
         let cart = JSON.parse(localStorage.getItem("panier"));
         let NewCart = cart.filter((article) =>
@@ -124,20 +122,21 @@ fetch( URL + product.id)
 
 })
 }
+// si la panier du local storage est vide aprés qu'un élément a été supprimé, le panier est supprimé du localstorage
 }else{
   baliseItems.innerHTML = 'Votre panier est vide'
   baliseItems.style.backgroundColor = "red"
   baliseItems.style.textAlign="center"
+  localStorage.removeItem('panier')
 }
 
-// récupération panier final 
-if(cart){
-  let finalCart = [];
+// récupération panier final  avec seulement l'id des articles
+let finalCart = [];
  cart = JSON.parse(localStorage.getItem('panier'))
 for(let product of cart){
   finalCart.push(product.id)
 }
- }
+
 
 let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
@@ -154,7 +153,8 @@ let btnOrder = document.getElementById('order');
 formulaire.firstName.addEventListener('change', function(){
   validfirstName(this);
 })
-
+// Vérification du texte saisi par l'utilisateur s'il rentre dans les critères du regex true sera renvoyé avec un message positif
+//sinon lun message d'erreur est affiché et false est renvoyé
 function validfirstName(input){
   firstNameRegex = new RegExp(/^[A-Za-zéèêëàçâ-]{3,30}$/)
 
@@ -245,48 +245,38 @@ function validEmail(input){
       return false
     }
 }
-
+//lorsque l'utilisateur clique sur le bouton commander ...
 btnOrder.addEventListener('click',function(event){
-  // confirmation formulaire et panier rempli
+  // confirmation formulaire et panier rempli sinon le bouton est désactivé
   if(validfirstName(formulaire.firstName) && validlastName(formulaire.lastName) && validAddress(formulaire.address) && validCity(formulaire.city) && validEmail(formulaire.email)){
-    if(cart == null){
-      alert('Votre panier est vide, Sélectionné des articles et ainsi finaliser votre commande')
-      event.preventDefault(event)
-    }else if(cart>0){
-    contact = {
-    firstName: document.getElementById("firstName").value,
-    lastName: document.getElementById("lastName").value,
-    address: document.getElementById("address").value,
-    city: document.getElementById("city").value,
-    email: document.getElementById("email").value,
-    };
-    send();
-    }else{
-      alert('Votre panier est vide, Sélectionné des articles et ainsi finaliser votre commande')
-      event.preventDefault(event)
-  }}else{
+ // l'objet contact est crée avec les informations du client
+      contact = {
+      firstName: document.getElementById("firstName").value,
+      lastName: document.getElementById("lastName").value,
+      address: document.getElementById("address").value,
+      city: document.getElementById("city").value,
+      email: document.getElementById("email").value,
+      };
+// fonction send qui creer unerequête POST pour l'envoi de l'objet contact en JSON ainsi que tableau finalcart qui contient l'id des produits et
+// l'utilisteur est redirigé à la page confirmation
+function send(){
+        fetch('http://localhost:3000/api/products/order', {
+          method: "POST",
+          headers: { 
+        'Accept': 'application/json', 
+        'Content-Type': 'application/json' 
+        },
+          body: JSON.stringify({contact,
+            products: finalCart}),
+        })
+        .then((res)=> {return res.json()})
+        .then((value)=> {
+          const idOrder = value.orderId
+          location.href=`./confirmation.html?id=${idOrder}`;
+        })}
+
+      send();
+  }else{
     event.preventDefault(event)
   }
 })
-
-function send(){
-
-  fetch('http://localhost:3000/api/products/order', {
-    method: "POST",
-    headers: { 
-  'Accept': 'application/json', 
-  'Content-Type': 'application/json' 
-  },
-    body: JSON.stringify({contact,
-      products: finalCart}),
-  })
-  .then((res)=> res.json())
-  .then((value)=> {
-    const idOrder = value.orderId
-    if(idOrder!==""){
-    document.location.href=`./confirmation.html?id=${idOrder}`;
-    }else{
-      alert('Erreur Serveur le numéro de commande ne peut pas être généré')
-    }
-  })
-}
