@@ -64,31 +64,31 @@ boutonpanier.addEventListener('click', function addCart(){
 //création de l'objet mykanap qui regroupe l'id du produit, la couleur et la quantité sélectionnés par le client
     let mykanap = new kanappanier(`${id}`,`${chooseColor}`,`${chooseQuantity}`);
 // création variable qui correspond à l'élement 'panier' du localStorage en étant parsé  
-    let panierEnr = JSON.parse(localStorage.getItem('panier'));
+    let panierLocal = JSON.parse(localStorage.getItem('panier'));
 //Vérification que le client a bien indiqué une couleur et une quantité entre 0 et 100
     if(chooseColor != "" && chooseQuantity > 0 && chooseQuantity <= 100){
 // si la variable, donc l'element 'panier' existe dans le localstorage alors..
-        if(panierEnr){
+        if(panierLocal){
 // on récupere dans un tableau pour chaque objet de notre tableau 'panierEnr' son id et sa couleur  avec la fonction map
-            const idcolorenregistrés = panierEnr.map((article) => article.id + article.color)
+            const idcolorenregistrés = panierLocal.map((article) => article.id + article.color)
 // la fonction findIndex permet de récupéré l'index qui correspond à l'id actuel et la coleur du produit sélectionné par le client              
                 let foundProductIndex = idcolorenregistrés.findIndex(element => element == id + mykanap.color)
 // si l'index est supérieur ou égal à 0 veut dire que le client veut rajouter au panier un article avec la même couleur déja sélectionné dans son panier
                 if(foundProductIndex >= 0){
 // si c'est le cas on ajoute la quantité sélectioonnée à la quantité déjà presente dans le panier
-                    let addquantity = parseInt(panierEnr[foundProductIndex].quantity)+ parseInt(mykanap.quantity)
-                    panierEnr[foundProductIndex].quantity = JSON.stringify(addquantity)
-                    localStorage.setItem('panier', JSON.stringify(panierEnr))
+                    let addquantity = parseInt(panierLocal[foundProductIndex].quantity)+ parseInt(mykanap.quantity)
+                    panierLocal[foundProductIndex].quantity = addquantity
+                    localStorage.setItem('panier', JSON.stringify(panierLocal))
 // Sinon on ajoute l'artcile sélectinné au panier
                 }else{
-                    panierEnr.push(mykanap)
-                    localStorage.setItem('panier', JSON.stringify(panierEnr))
+                    panierLocal.push(mykanap)
+                    localStorage.setItem('panier', JSON.stringify(panierLocal))
                 }
 // Si panierEnr n'existe pas on ajoute l'article au tableau et on créer notre élément et notre panier(tableau) dans le localStorage en JSON
         }else{
-            panierEnr = [];
-            panierEnr.push(mykanap)
-            localStorage.setItem('panier',JSON.stringify(panierEnr))
+            panierLocal = [];
+            panierLocal.push(mykanap)
+            localStorage.setItem('panier',JSON.stringify(panierLocal))
         }
 //message d'erreur si le client n'a pas indiqué une quantité entre 0 et 100 et ou une couleur
     }else{

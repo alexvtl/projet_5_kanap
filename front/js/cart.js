@@ -102,12 +102,9 @@ fetch( URL + product.id)
     let balisesDelete = document.querySelectorAll('.deleteItem');
     balisesDelete.forEach((baliseDelete) => {
       baliseDelete.addEventListener('click', () => {
-        let produitsàSuprimer = baliseDelete.closest('article');
-        console.log(produitsàSuprimer)
-         getId = produitsàSuprimer.getAttribute("data-id");
-        console.log(getId)
+        let produitsàSuprimer = baliseDelete.closest('article');      
+        getId = produitsàSuprimer.getAttribute("data-id");
         getColor = produitsàSuprimer.getAttribute("data-color");
-        console.log(getColor)
         removeItem(getId,getColor)
         })
       })
@@ -154,7 +151,7 @@ formulaire.firstName.addEventListener('change', function(){
   validfirstName(this);
 })
 // Vérification du texte saisi par l'utilisateur s'il rentre dans les critères du regex true sera renvoyé avec un message positif
-//sinon lun message d'erreur est affiché et false est renvoyé
+//sinon un message d'erreur est affiché et false est renvoyé
 function validfirstName(input){
   firstNameRegex = new RegExp(/^[A-Za-zéèêëàçâ-]{3,30}$/)
 
@@ -257,7 +254,13 @@ btnOrder.addEventListener('click',function(event){
       city: document.getElementById("city").value,
       email: document.getElementById("email").value,
       };
-// fonction send qui creer unerequête POST pour l'envoi de l'objet contact en JSON ainsi que tableau finalcart qui contient l'id des produits et
+      send();
+  }else{
+    event.preventDefault(event)
+  }
+})
+
+// fonction send qui creer une requête POST pour l'envoi de l'objet contact en JSON ainsi que tableau finalcart qui contient l'id des produits et
 // l'utilisteur est redirigé à la page confirmation
 function send(){
         fetch('http://localhost:3000/api/products/order', {
@@ -274,9 +277,3 @@ function send(){
           const idOrder = value.orderId
           location.href=`./confirmation.html?id=${idOrder}`;
         })}
-
-      send();
-  }else{
-    event.preventDefault(event)
-  }
-})
