@@ -128,10 +128,10 @@ fetch( URL + product.id)
 }
 
 // récupération panier final  avec seulement l'id des articles
-let finalCart = [];
+let finalCartId = [];
  cart = JSON.parse(localStorage.getItem('panier'))
 for(let product of cart){
-  finalCart.push(product.id)
+  finalCartId.push(product.id)
 }
 
 
@@ -244,6 +244,7 @@ function validEmail(input){
 }
 //lorsque l'utilisateur clique sur le bouton commander ...
 btnOrder.addEventListener('click',function(event){
+  event.preventDefault(event)
   // confirmation formulaire et panier rempli sinon le bouton est désactivé
   if(validfirstName(formulaire.firstName) && validlastName(formulaire.lastName) && validAddress(formulaire.address) && validCity(formulaire.city) && validEmail(formulaire.email)){
  // l'objet contact est crée avec les informations du client
@@ -260,7 +261,7 @@ btnOrder.addEventListener('click',function(event){
   }
 })
 
-// fonction send qui creer une requête POST pour l'envoi de l'objet contact en JSON ainsi que tableau finalcart qui contient l'id des produits et
+// fonction send qui creer une requête POST pour l'envoi de l'objet contact en JSON ainsi que tableau finalcartId qui contient l'id des produits et
 // l'utilisteur est redirigé à la page confirmation
 function send(){
         fetch('http://localhost:3000/api/products/order', {
@@ -270,7 +271,7 @@ function send(){
         'Content-Type': 'application/json' 
         },
           body: JSON.stringify({contact,
-            products: finalCart}),
+            products: finalCartId}),
         })
         .then((res)=> {return res.json()})
         .then((value)=> {

@@ -76,7 +76,7 @@ boutonpanier.addEventListener('click', function addCart(){
 // si l'index est supérieur ou égal à 0 veut dire que le client veut rajouter au panier un article avec la même couleur déja sélectionné dans son panier
                 if(foundProductIndex >= 0){
 // si c'est le cas on ajoute la quantité sélectioonnée à la quantité déjà presente dans le panier
-                    let addquantity = parseInt(panierLocal[foundProductIndex].quantity)+ parseInt(mykanap.quantity)
+                    let addquantity = parseInt(panierLocal[foundProductIndex].quantity) + parseInt(mykanap.quantity)
                     panierLocal[foundProductIndex].quantity = addquantity
                     localStorage.setItem('panier', JSON.stringify(panierLocal))
 // Sinon on ajoute l'artcile sélectinné au panier
